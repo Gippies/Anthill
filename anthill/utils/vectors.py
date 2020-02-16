@@ -26,7 +26,7 @@ class Vector2:
         return Vector2(0, 0)
 
     def get_normal(self):
-        return math.sqrt(self.x ** 2 + self.y ** 2)
+        return math.sqrt(self.x ** 2.0 + self.y ** 2.0)
 
     def get_normalized_vector(self):
         return self / self.get_normal()

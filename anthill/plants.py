@@ -10,6 +10,8 @@ class Leafy(GraphicComponent):
 
     def __init__(self, x, y, width=WIDTH, height=HEIGHT):
         super().__init__(x, y, width, height)
+        self.being_approached_by = None
+        self.being_carried_by = None
 
     def draw(self):
         """Ants are represented by a square, as drawn below"""

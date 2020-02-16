@@ -7,9 +7,9 @@ class Simulation:
         self.plant_kingdom = PlantKingdom()
 
     def draw(self):
-        self.colony.draw()
         self.plant_kingdom.draw()
+        self.colony.draw()
 
     def update(self, delta_time):
-        self.colony.update(delta_time)
         self.plant_kingdom.update(delta_time)
+        self.colony.update(self.plant_kingdom.leafies, delta_time)

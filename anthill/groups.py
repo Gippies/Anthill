@@ -2,6 +2,7 @@ import random
 
 from anthill.creatures import Ant
 from anthill.plants import Leafy
+from anthill.structures import Hill
 from settings import SCREEN_WIDTH, SCREEN_HEIGHT
 
 
@@ -12,6 +13,7 @@ class Colony:
 
     def __init__(self):
         self.ants = []
+        self.hill = Hill()
         x = Colony.START_POS_X
         y = Colony.START_POS_Y
         for i in range(0, Colony.INITIAL_AMOUNT):
@@ -21,9 +23,9 @@ class Colony:
         for ant in self.ants:
             ant.draw()
 
-    def update(self, delta_time):
+    def update(self, leafies, delta_time):
         for ant in self.ants:
-            ant.update(delta_time)
+            ant.update(leafies, self.hill, delta_time)
 
 
 class PlantKingdom:

@@ -9,6 +9,6 @@ class GraphicComponent:
         """Override this to draw an object"""
         pass
 
-    def update(self, delta_time):
+    def update(self, *args):
         """Override this to update an object's graphic (i.e. position)"""
         pass
