@@ -1,6 +1,6 @@
 import pyglet
 
-from ant import Ant
+from anthill.creatures import Ant
 from settings import SCREEN_WIDTH, SCREEN_HEIGHT
 
 window = pyglet.window.Window(SCREEN_WIDTH, SCREEN_HEIGHT)

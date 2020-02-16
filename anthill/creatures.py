@@ -1,6 +1,6 @@
 import pyglet
 
-from graphics import GraphicComponent
+from anthill.utils.graphics import GraphicComponent
 
 
 class Ant(GraphicComponent):
