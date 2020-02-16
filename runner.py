@@ -1,17 +1,17 @@
 import pyglet
 
-from anthill.creatures import Ant
+from anthill.groups import Colony
 from settings import SCREEN_WIDTH, SCREEN_HEIGHT
 
 window = pyglet.window.Window(SCREEN_WIDTH, SCREEN_HEIGHT)
-my_ant = Ant(200, 200)
+my_colony = Colony()
 
 
 @window.event
 def on_draw():
     window.clear()
-    my_ant.draw()
+    my_colony.draw()
 
 
-pyglet.clock.schedule_interval(my_ant.update, .016)
+pyglet.clock.schedule_interval(my_colony.update, .016)
 pyglet.app.run()
