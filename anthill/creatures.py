@@ -1,5 +1,6 @@
 import pyglet
 
+from anthill.colors import WHITE_4
 from anthill.utils.graphics import GraphicComponent
 
 
@@ -22,5 +23,6 @@ class Ant(GraphicComponent):
                                      ('v2i', (self.x, self.y,
                                               self.x + self.width, self.y,
                                               self.x + self.width, self.y + self.height,
-                                              self.x, self.y + self.height))
+                                              self.x, self.y + self.height)),
+                                     WHITE_4
                                      )
