@@ -1,4 +1,7 @@
+import random
+
 from anthill.creatures import Ant
+from anthill.plants import Leafy
 from settings import SCREEN_WIDTH, SCREEN_HEIGHT
 
 
@@ -21,3 +24,22 @@ class Colony:
     def update(self, delta_time):
         for ant in self.ants:
             ant.update(delta_time)
+
+
+class PlantKingdom:
+    INITIAL_AMOUNT_OF_LEAFIES = 500
+
+    def __init__(self):
+        self.leafies = []
+        for i in range(0, PlantKingdom.INITIAL_AMOUNT_OF_LEAFIES):
+            x = round(random.uniform(0, SCREEN_WIDTH))
+            y = round(random.uniform(0, SCREEN_HEIGHT))
+            self.leafies.append(Leafy(x, y))
+
+    def draw(self):
+        for leafy in self.leafies:
+            leafy.draw()
+
+    def update(self, delta_time):
+        for leafy in self.leafies:
+            leafy.update(delta_time)
