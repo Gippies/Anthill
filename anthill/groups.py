@@ -13,10 +13,6 @@ class Colony:
         y = Colony.START_POS_Y
         for i in range(0, Colony.INITIAL_AMOUNT):
             self.ants.append(Ant(x, y))
-            y += 10
-            if y > Colony.START_POS_Y + 100:
-                y = Colony.START_POS_Y
-                x += 10
 
     def draw(self):
         for ant in self.ants:
