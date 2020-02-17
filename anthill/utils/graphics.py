@@ -1,7 +1,6 @@
 class GraphicComponent:
-    def __init__(self, x, y, width, height):
-        self.x = x
-        self.y = y
+    def __init__(self, position, width, height):
+        self.position = position
         self.width = width
         self.height = height
 

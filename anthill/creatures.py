@@ -21,7 +21,7 @@ class Ant(GraphicComponent):
     WIDTH = 4
     HEIGHT = 4
 
-    def __init__(self, x, y, width=WIDTH, height=HEIGHT):
+    def __init__(self, position, width=WIDTH, height=HEIGHT):
         self.velocity = Vector2.zero()
         self.speed = Ant.MAX_SPEED
         self.search_seconds = random.uniform(0.0, Ant.MAX_SEARCH_SECONDS)
@@ -30,19 +30,17 @@ class Ant(GraphicComponent):
         self.approaching = None
         self.carrying = None
         self.direction_to_go = 0
-        super().__init__(x, y, width, height)
+        super().__init__(position, width, height)
 
     def _update_position(self):
-        old_x = self.x
-        old_y = self.y
-        self.x = round(old_x + self.velocity.x)
-        self.y = round(old_y + self.velocity.y)
+        old_position = self.position
+        self.position = old_position + self.velocity
 
         # Stay in the screen
-        if not 0 < self.x < SCREEN_WIDTH:
-            self.x = old_x
-        if not 0 < self.y < SCREEN_HEIGHT:
-            self.y = old_y
+        if not 0 < self.position.x < SCREEN_WIDTH:
+            self.position.x = old_position.x
+        if not 0 < self.position.y < SCREEN_HEIGHT:
+            self.position.y = old_position.y
 
     def _search(self, leafies, hill, delta_time):
         self.search_seconds -= delta_time
@@ -51,8 +49,8 @@ class Ant(GraphicComponent):
             self.velocity = self.direction_to_go * self.speed * delta_time
             self.search_seconds = random.uniform(0.0, Ant.MAX_SEARCH_SECONDS)
         for leafy in leafies:
-            if self.x - Ant.MAX_SEARCH_RADIUS <= leafy.x <= self.x + Ant.MAX_SEARCH_RADIUS and \
-                    self.y - Ant.MAX_SEARCH_RADIUS <= leafy.y <= self.y + Ant.MAX_SEARCH_RADIUS and \
+            if self.position.x - Ant.MAX_SEARCH_RADIUS <= leafy.position.x <= self.position.x + Ant.MAX_SEARCH_RADIUS and \
+                    self.position.y - Ant.MAX_SEARCH_RADIUS <= leafy.position.y <= self.position.y + Ant.MAX_SEARCH_RADIUS and \
                     leafy.being_approached_by is None and leafy.being_carried_by is None and leafy not in hill.food_store:
                 self.state = State.GET_FOOD
                 self.approaching = leafy
@@ -60,9 +58,12 @@ class Ant(GraphicComponent):
                 break
 
     def _get_food(self, delta_time):
-        self.direction_to_go = Vector2(self.approaching.x - self.x, self.approaching.y - self.y).get_normalized_vector()
+        self.direction_to_go = (self.approaching.position - self.position).get_normalized_vector()
         self.velocity = self.direction_to_go * self.speed * delta_time
-        if self.approaching.x <= self.x + Ant.WIDTH and self.approaching.x + Leafy.WIDTH >= self.x and self.approaching.y <= self.y + Ant.HEIGHT and self.approaching.y + Leafy.HEIGHT >= self.y:
+        if self.approaching.position.x <= self.position.x + Ant.WIDTH and \
+                self.approaching.position.x + Leafy.WIDTH >= self.position.x and \
+                self.approaching.position.y <= self.position.y + Ant.HEIGHT and \
+                self.approaching.position.y + Leafy.HEIGHT >= self.position.y:
             self.state = State.RETURN_TO_HILL
             self.carrying = self.approaching
             self.approaching = None
@@ -70,11 +71,14 @@ class Ant(GraphicComponent):
             self.carrying.being_approached_by = None
 
     def _return_to_hill(self, hill, delta_time):
-        self.direction_to_go = Vector2(hill.x - self.x, hill.y - self.y).get_normalized_vector()
-        self.carrying.x = self.x - Ant.WIDTH
-        self.carrying.y = self.y
+        self.direction_to_go = (hill.position - self.position).get_normalized_vector()
+        self.carrying.position.x = self.position.x - Ant.WIDTH
+        self.carrying.position.y = self.position.y
         self.velocity = self.direction_to_go * self.speed * delta_time
-        if hill.x <= self.x + Ant.WIDTH and hill.x + Hill.WIDTH >= self.x and hill.y <= self.y + Ant.HEIGHT and hill.y + Hill.HEIGHT >= self.y:
+        if hill.position.x <= self.position.x + Ant.WIDTH and \
+                hill.position.x + Hill.WIDTH >= self.position.x and \
+                hill.position.y <= self.position.y + Ant.HEIGHT and \
+                hill.position.y + Hill.HEIGHT >= self.position.y:
             self.state = State.SEARCH
             hill.food_store.append(self.carrying)
             self.carrying.being_carried_by = None

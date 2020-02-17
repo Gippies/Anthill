@@ -7,6 +7,7 @@ from anthill.colors import WHITE_4, GREEN_4
 from anthill.creatures import Ant
 from anthill.plants import Leafy
 from anthill.structures import Hill
+from anthill.utils.vectors import Vector2
 from settings import SCREEN_WIDTH, SCREEN_HEIGHT
 
 
@@ -17,11 +18,11 @@ class Colony:
 
     def __init__(self):
         self.ants = []
-        self.hill = Hill(Colony.START_POS_X, Colony.START_POS_Y)
+        self.hill = Hill(Vector2(Colony.START_POS_X, Colony.START_POS_Y))
         x = Colony.START_POS_X
         y = Colony.START_POS_Y
         for i in range(0, Colony.INITIAL_AMOUNT):
-            self.ants.append(Ant(x, y))
+            self.ants.append(Ant(Vector2(x, y)))
 
     def draw(self):
         self.hill.draw()
@@ -30,10 +31,10 @@ class Colony:
             batch_to_draw.add(4, pyglet.gl.GL_QUADS, None,
                               (
                                  'v2i', (
-                                     ant.x, ant.y,
-                                     ant.x + ant.width, ant.y,
-                                     ant.x + ant.width, ant.y + ant.height,
-                                     ant.x, ant.y + ant.height
+                                     ant.position.x, ant.position.y,
+                                     ant.position.x + ant.width, ant.position.y,
+                                     ant.position.x + ant.width, ant.position.y + ant.height,
+                                     ant.position.x, ant.position.y + ant.height
                                  )
                               ),
                               WHITE_4
@@ -51,9 +52,8 @@ class PlantKingdom:
     def __init__(self):
         self.leafies = []
         for i in range(0, PlantKingdom.INITIAL_AMOUNT_OF_LEAFIES):
-            x = round(random.uniform(0, SCREEN_WIDTH))
-            y = round(random.uniform(0, SCREEN_HEIGHT))
-            self.leafies.append(Leafy(x, y))
+            pos = Vector2(round(random.uniform(0, SCREEN_WIDTH)), round(random.uniform(0, SCREEN_HEIGHT)))
+            self.leafies.append(Leafy(pos))
 
     def draw(self):
         batch_to_draw = Batch()
@@ -61,10 +61,10 @@ class PlantKingdom:
             batch_to_draw.add(4, pyglet.gl.GL_QUADS, None,
                               (
                                   'v2i', (
-                                      leafy.x, leafy.y,
-                                      leafy.x + leafy.width, leafy.y,
-                                      leafy.x + leafy.width, leafy.y + leafy.height,
-                                      leafy.x, leafy.y + leafy.height
+                                      leafy.position.x, leafy.position.y,
+                                      leafy.position.x + leafy.width, leafy.position.y,
+                                      leafy.position.x + leafy.width, leafy.position.y + leafy.height,
+                                      leafy.position.x, leafy.position.y + leafy.height
                                   )
                               ),
                               GREEN_4
