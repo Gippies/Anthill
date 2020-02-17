@@ -17,13 +17,14 @@ class Colony:
 
     def __init__(self):
         self.ants = []
-        self.hill = Hill()
+        self.hill = Hill(Colony.START_POS_X, Colony.START_POS_Y)
         x = Colony.START_POS_X
         y = Colony.START_POS_Y
         for i in range(0, Colony.INITIAL_AMOUNT):
             self.ants.append(Ant(x, y))
 
     def draw(self):
+        self.hill.draw()
         batch_to_draw = Batch()
         for ant in self.ants:
             batch_to_draw.add(4, pyglet.gl.GL_QUADS, None,

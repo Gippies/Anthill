@@ -29,4 +29,8 @@ class Vector2:
         return math.sqrt(self.x ** 2.0 + self.y ** 2.0)
 
     def get_normalized_vector(self):
-        return self / self.get_normal()
+        normal = self.get_normal()
+        if normal > 0:
+            return self / self.get_normal()
+        else:
+            return Vector2.zero()

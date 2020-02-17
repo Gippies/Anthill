@@ -1,5 +1,7 @@
 import random
 
+from anthill.plants import Leafy
+from anthill.structures import Hill
 from anthill.utils.graphics import GraphicComponent
 from anthill.utils.vectors import Vector2
 from settings import SCREEN_WIDTH, SCREEN_HEIGHT
@@ -58,10 +60,9 @@ class Ant(GraphicComponent):
                 break
 
     def _get_food(self, delta_time):
-        if self.approaching.x != self.x and self.approaching.y != self.y:
-            self.direction_to_go = Vector2(self.approaching.x - self.x, self.approaching.y - self.y).get_normalized_vector()
+        self.direction_to_go = Vector2(self.approaching.x - self.x, self.approaching.y - self.y).get_normalized_vector()
         self.velocity = self.direction_to_go * self.speed * delta_time
-        if self.approaching.x == self.x and self.approaching.y == self.y:
+        if self.approaching.x <= self.x + Ant.WIDTH and self.approaching.x + Leafy.WIDTH >= self.x and self.approaching.y <= self.y + Ant.HEIGHT and self.approaching.y + Leafy.HEIGHT >= self.y:
             self.state = State.RETURN_TO_HILL
             self.carrying = self.approaching
             self.approaching = None
@@ -69,12 +70,11 @@ class Ant(GraphicComponent):
             self.carrying.being_approached_by = None
 
     def _return_to_hill(self, hill, delta_time):
-        if SCREEN_WIDTH / 2.0 != self.x and SCREEN_HEIGHT / 2.0 != self.y:
-            self.direction_to_go = Vector2(SCREEN_WIDTH / 2.0 - self.x, SCREEN_HEIGHT / 2.0 - self.y).get_normalized_vector()
-        self.carrying.x = self.x
+        self.direction_to_go = Vector2(hill.x - self.x, hill.y - self.y).get_normalized_vector()
+        self.carrying.x = self.x - Ant.WIDTH
         self.carrying.y = self.y
         self.velocity = self.direction_to_go * self.speed * delta_time
-        if round(SCREEN_WIDTH / 2.0) == self.x and round(SCREEN_HEIGHT / 2.0) == self.y:
+        if hill.x <= self.x + Ant.WIDTH and hill.x + Hill.WIDTH >= self.x and hill.y <= self.y + Ant.HEIGHT and hill.y + Hill.HEIGHT >= self.y:
             self.state = State.SEARCH
             hill.food_store.append(self.carrying)
             self.carrying.being_carried_by = None
