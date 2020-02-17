@@ -47,7 +47,7 @@ class Colony:
 
 
 class PlantKingdom:
-    INITIAL_AMOUNT_OF_LEAFIES = 500
+    INITIAL_AMOUNT_OF_LEAFIES = 250
 
     def __init__(self):
         self.leafies = []
