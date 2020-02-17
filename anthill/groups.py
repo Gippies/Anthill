@@ -1,5 +1,9 @@
 import random
 
+import pyglet
+from pyglet.graphics import Batch
+
+from anthill.colors import WHITE_4, GREEN_4
 from anthill.creatures import Ant
 from anthill.plants import Leafy
 from anthill.structures import Hill
@@ -20,8 +24,20 @@ class Colony:
             self.ants.append(Ant(x, y))
 
     def draw(self):
+        batch_to_draw = Batch()
         for ant in self.ants:
-            ant.draw()
+            batch_to_draw.add(4, pyglet.gl.GL_QUADS, None,
+                              (
+                                 'v2i', (
+                                     ant.x, ant.y,
+                                     ant.x + ant.width, ant.y,
+                                     ant.x + ant.width, ant.y + ant.height,
+                                     ant.x, ant.y + ant.height
+                                 )
+                              ),
+                              WHITE_4
+                              )
+        batch_to_draw.draw()
 
     def update(self, leafies, delta_time):
         for ant in self.ants:
@@ -39,8 +55,20 @@ class PlantKingdom:
             self.leafies.append(Leafy(x, y))
 
     def draw(self):
+        batch_to_draw = Batch()
         for leafy in self.leafies:
-            leafy.draw()
+            batch_to_draw.add(4, pyglet.gl.GL_QUADS, None,
+                              (
+                                  'v2i', (
+                                      leafy.x, leafy.y,
+                                      leafy.x + leafy.width, leafy.y,
+                                      leafy.x + leafy.width, leafy.y + leafy.height,
+                                      leafy.x, leafy.y + leafy.height
+                                  )
+                              ),
+                              GREEN_4
+                              )
+        batch_to_draw.draw()
 
     def update(self, delta_time):
         for leafy in self.leafies:

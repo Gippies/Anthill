@@ -1,6 +1,3 @@
-import pyglet
-
-from anthill.colors import GREEN_4
 from anthill.utils.graphics import GraphicComponent
 
 
@@ -12,14 +9,3 @@ class Leafy(GraphicComponent):
         super().__init__(x, y, width, height)
         self.being_approached_by = None
         self.being_carried_by = None
-
-    def draw(self):
-        """Ants are represented by a square, as drawn below"""
-        pyglet.graphics.draw_indexed(4, pyglet.gl.GL_QUADS,
-                                     [0, 1, 2, 3, 0],
-                                     ('v2i', (self.x, self.y,
-                                              self.x + self.width, self.y,
-                                              self.x + self.width, self.y + self.height,
-                                              self.x, self.y + self.height)),
-                                     GREEN_4
-                                     )

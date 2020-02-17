@@ -1,8 +1,5 @@
 import random
 
-import pyglet
-
-from anthill.colors import WHITE_4
 from anthill.utils.graphics import GraphicComponent
 from anthill.utils.vectors import Vector2
 from settings import SCREEN_WIDTH, SCREEN_HEIGHT
@@ -83,14 +80,3 @@ class Ant(GraphicComponent):
                 self.carrying = None
 
         self._update_position()
-
-    def draw(self):
-        """Ants are represented by a square, as drawn below"""
-        pyglet.graphics.draw_indexed(4, pyglet.gl.GL_QUADS,
-                                     [0, 1, 2, 3, 0],
-                                     ('v2i', (self.x, self.y,
-                                              self.x + self.width, self.y,
-                                              self.x + self.width, self.y + self.height,
-                                              self.x, self.y + self.height)),
-                                     WHITE_4
-                                     )
