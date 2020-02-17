@@ -24,22 +24,28 @@ class Colony:
         for i in range(0, Colony.INITIAL_AMOUNT):
             self.ants.append(Ant(Vector2(x, y)))
 
-    def draw(self):
+    def _draw_hill(self):
         self.hill.draw()
+
+    def _draw_ants(self):
         batch_to_draw = Batch()
         for ant in self.ants:
             batch_to_draw.add(4, pyglet.gl.GL_QUADS, None,
                               (
-                                 'v2i', (
-                                     ant.position.x, ant.position.y,
-                                     ant.position.x + ant.width, ant.position.y,
-                                     ant.position.x + ant.width, ant.position.y + ant.height,
-                                     ant.position.x, ant.position.y + ant.height
-                                 )
+                                  'v2i', (
+                                      ant.position.x, ant.position.y,
+                                      ant.position.x + ant.width, ant.position.y,
+                                      ant.position.x + ant.width, ant.position.y + ant.height,
+                                      ant.position.x, ant.position.y + ant.height
+                                  )
                               ),
                               WHITE_4
                               )
         batch_to_draw.draw()
+
+    def draw(self):
+        self._draw_hill()
+        self._draw_ants()
 
     def update(self, leafies, delta_time):
         for ant in self.ants:
