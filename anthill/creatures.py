@@ -60,10 +60,7 @@ class Ant(GraphicComponent):
     def _get_food(self, delta_time):
         self.direction_to_go = (self.approaching.position - self.position).get_normalized_vector()
         self.velocity = self.direction_to_go * self.speed * delta_time
-        if self.approaching.position.x <= self.position.x + Ant.WIDTH and \
-                self.approaching.position.x + Leafy.WIDTH >= self.position.x and \
-                self.approaching.position.y <= self.position.y + Ant.HEIGHT and \
-                self.approaching.position.y + Leafy.HEIGHT >= self.position.y:
+        if self.is_touching(self.approaching):
             self.state = State.RETURN_TO_HILL
             self.carrying = self.approaching
             self.approaching = None
@@ -75,10 +72,7 @@ class Ant(GraphicComponent):
         self.carrying.position.x = self.position.x - Ant.WIDTH
         self.carrying.position.y = self.position.y
         self.velocity = self.direction_to_go * self.speed * delta_time
-        if hill.position.x <= self.position.x + Ant.WIDTH and \
-                hill.position.x + Hill.WIDTH >= self.position.x and \
-                hill.position.y <= self.position.y + Ant.HEIGHT and \
-                hill.position.y + Hill.HEIGHT >= self.position.y:
+        if self.is_touching(hill):
             self.state = State.SEARCH
             hill.food_store.append(self.carrying)
             self.carrying.being_carried_by = None
