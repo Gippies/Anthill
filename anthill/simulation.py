@@ -11,5 +11,5 @@ class Simulation:
         self.colony.draw()
 
     def update(self, delta_time):
-        self.plant_kingdom.update(delta_time)
         self.colony.update(self.plant_kingdom.leafies, delta_time)
+        self.plant_kingdom.update(delta_time)
