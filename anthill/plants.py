@@ -15,7 +15,7 @@ class Leafy(GraphicComponent):
 
     def draw(self):
         """Ants are represented by a square, as drawn below"""
-        pyglet.graphics.draw_indexed(4, pyglet.gl.GL_POLYGON,
+        pyglet.graphics.draw_indexed(4, pyglet.gl.GL_QUADS,
                                      [0, 1, 2, 3, 0],
                                      ('v2i', (self.x, self.y,
                                               self.x + self.width, self.y,

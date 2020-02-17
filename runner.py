@@ -13,5 +13,5 @@ def on_draw():
     simulation.draw()
 
 
-pyglet.clock.schedule_interval(simulation.update, FRAME_RATE)
+pyglet.clock.schedule_interval(simulation.update, 1.0 / FRAME_RATE)
 pyglet.app.run()
