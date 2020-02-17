@@ -42,41 +42,49 @@ class Ant(GraphicComponent):
         if not 0 < self.y < SCREEN_HEIGHT:
             self.y = old_y
 
+    def _search(self, leafies, hill, delta_time):
+        self.search_seconds -= delta_time
+        if self.search_seconds <= 0.0:
+            self.direction_to_go = Vector2(random.uniform(-1, 1), random.uniform(-1, 1)).get_normalized_vector()
+            self.velocity = self.direction_to_go * self.speed * delta_time
+            self.search_seconds = random.uniform(0.0, Ant.MAX_SEARCH_SECONDS)
+        for leafy in leafies:
+            if self.x - Ant.MAX_SEARCH_RADIUS <= leafy.x <= self.x + Ant.MAX_SEARCH_RADIUS and \
+                    self.y - Ant.MAX_SEARCH_RADIUS <= leafy.y <= self.y + Ant.MAX_SEARCH_RADIUS and \
+                    leafy.being_approached_by is None and leafy.being_carried_by is None and leafy not in hill.food_store:
+                self.state = State.GET_FOOD
+                self.approaching = leafy
+                leafy.being_approached_by = self
+                break
+
+    def _get_food(self, delta_time):
+        if self.approaching.x != self.x and self.approaching.y != self.y:
+            self.direction_to_go = Vector2(self.approaching.x - self.x, self.approaching.y - self.y).get_normalized_vector()
+        self.velocity = self.direction_to_go * self.speed * delta_time
+        if self.approaching.x == self.x and self.approaching.y == self.y:
+            self.state = State.RETURN_TO_HILL
+            self.carrying = self.approaching
+            self.approaching = None
+            self.carrying.being_carried_by = self
+            self.carrying.being_approached_by = None
+
+    def _return_to_hill(self, hill, delta_time):
+        if SCREEN_WIDTH / 2.0 != self.x and SCREEN_HEIGHT / 2.0 != self.y:
+            self.direction_to_go = Vector2(SCREEN_WIDTH / 2.0 - self.x, SCREEN_HEIGHT / 2.0 - self.y).get_normalized_vector()
+        self.carrying.x = self.x
+        self.carrying.y = self.y
+        self.velocity = self.direction_to_go * self.speed * delta_time
+        if round(SCREEN_WIDTH / 2.0) == self.x and round(SCREEN_HEIGHT / 2.0) == self.y:
+            self.state = State.SEARCH
+            hill.food_store.append(self.carrying)
+            self.carrying.being_carried_by = None
+            self.carrying = None
+
     def update(self, leafies, hill, delta_time):
         if self.state == State.SEARCH:
-            self.search_seconds -= delta_time
-            if self.search_seconds <= 0.0:
-                self.direction_to_go = Vector2(random.uniform(-1, 1), random.uniform(-1, 1)).get_normalized_vector()
-                self.velocity = self.direction_to_go * self.speed * delta_time
-                self.search_seconds = random.uniform(0.0, Ant.MAX_SEARCH_SECONDS)
-            for leafy in leafies:
-                if self.x - Ant.MAX_SEARCH_RADIUS <= leafy.x <= self.x + Ant.MAX_SEARCH_RADIUS and \
-                        self.y - Ant.MAX_SEARCH_RADIUS <= leafy.y <= self.y + Ant.MAX_SEARCH_RADIUS and \
-                        leafy.being_approached_by is None and leafy.being_carried_by is None and leafy not in hill.food_store:
-                    self.state = State.GET_FOOD
-                    self.approaching = leafy
-                    leafy.being_approached_by = self
-                    break
+            self._search(leafies, hill, delta_time)
         elif self.state == State.GET_FOOD:
-            if self.approaching.x != self.x and self.approaching.y != self.y:
-                self.direction_to_go = Vector2(self.approaching.x - self.x, self.approaching.y - self.y).get_normalized_vector()
-            self.velocity = self.direction_to_go * self.speed * delta_time
-            if self.approaching.x == self.x and self.approaching.y == self.y:
-                self.state = State.RETURN_TO_HILL
-                self.carrying = self.approaching
-                self.approaching = None
-                self.carrying.being_carried_by = self
-                self.carrying.being_approached_by = None
+            self._get_food(delta_time)
         elif self.state == State.RETURN_TO_HILL:
-            if SCREEN_WIDTH / 2.0 != self.x and SCREEN_HEIGHT / 2.0 != self.y:
-                self.direction_to_go = Vector2(SCREEN_WIDTH / 2.0 - self.x, SCREEN_HEIGHT / 2.0 - self.y).get_normalized_vector()
-            self.carrying.x = self.x
-            self.carrying.y = self.y
-            self.velocity = self.direction_to_go * self.speed * delta_time
-            if round(SCREEN_WIDTH / 2.0) == self.x and round(SCREEN_HEIGHT / 2.0) == self.y:
-                self.state = State.SEARCH
-                hill.food_store.append(self.carrying)
-                self.carrying.being_carried_by = None
-                self.carrying = None
-
+            self._return_to_hill(hill, delta_time)
         self._update_position()
