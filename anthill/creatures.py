@@ -69,7 +69,7 @@ class Ant(GraphicComponent):
 
     def _return_to_hill(self, hill, delta_time):
         self.direction_to_go = (hill.position - self.position).get_normalized_vector()
-        self.carrying.position.x = self.position.x - Ant.WIDTH
+        self.carrying.position.x = self.position.x - self.width
         self.carrying.position.y = self.position.y
         self.velocity = self.direction_to_go * self.speed * delta_time
         if self.is_touching(hill):
