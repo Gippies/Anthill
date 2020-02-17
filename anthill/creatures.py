@@ -1,7 +1,5 @@
 import random
 
-from anthill.plants import Leafy
-from anthill.structures import Hill
 from anthill.utils.graphics import GraphicComponent
 from anthill.utils.vectors import Vector2
 from settings import SCREEN_WIDTH, SCREEN_HEIGHT
