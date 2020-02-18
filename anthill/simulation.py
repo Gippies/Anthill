@@ -1,5 +1,7 @@
 from anthill.groups import Colony, PlantKingdom
+from anthill.structures import Chamber
 from anthill.utils.graphics import GraphicView
+from anthill.utils.vectors import Vector2
 
 
 class View:
@@ -17,7 +19,7 @@ class Simulation:
         graphic_components.extend(self.colony.ants)
         graphic_components.extend(self.plant_kingdom.leafies)
         self.outside_view = GraphicView(graphic_components)
-        self.underground_view = GraphicView([])
+        self.underground_view = GraphicView([Chamber(Vector2(200, 200))])
 
     def draw(self):
         if self.view == View.OUTSIDE:
