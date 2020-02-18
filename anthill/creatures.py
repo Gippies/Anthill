@@ -46,7 +46,7 @@ class Ant(GraphicComponent):
     def _search(self, leafies, hill, delta_time):
         self.search_seconds -= delta_time
         if self.search_seconds <= 0.0:
-            self.direction_to_go = Vector2(random.uniform(-1, 1), random.uniform(-1, 1)).get_normalized_vector()
+            self.direction_to_go = Vector2(random.uniform(-1.0, 1.0), random.uniform(-1.0, 1.0)).get_normalized_vector()
             self.velocity = self.direction_to_go * self.speed * delta_time
             self.search_seconds = random.uniform(0.0, Ant.MAX_SEARCH_SECONDS)
         for leafy in leafies:
