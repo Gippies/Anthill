@@ -12,18 +12,16 @@ class Hill(GraphicComponent):
         super().__init__(position, width, height)
         self.food_store = []
 
-    def draw(self):
-        pyglet.graphics.draw(4, pyglet.gl.GL_QUADS,
-                             (
-                                 'v2i', (
-                                     self.position.x, self.position.y,
-                                     self.position.x + self.width, self.position.y,
-                                     self.position.x + self.width, self.position.y + self.height,
-                                     self.position.x, self.position.y + self.height
-                                 )
-                             ),
-                             SAND_YELLOW_4
-                             )
+    def get_draw_options(self):
+        return (4, pyglet.gl.GL_QUADS, None, (
+                 'v2i', (
+                     self.position.x, self.position.y,
+                     self.position.x + self.width, self.position.y,
+                     self.position.x + self.width, self.position.y + self.height,
+                     self.position.x, self.position.y + self.height
+                 )
+                ), SAND_YELLOW_4
+                )
 
     def update(self, delta_time):
         pass

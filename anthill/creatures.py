@@ -1,5 +1,8 @@
 import random
 
+import pyglet
+
+from anthill.colors import WHITE_4
 from anthill.utils.graphics import GraphicComponent
 from anthill.utils.vectors import Vector2
 from settings import SCREEN_WIDTH, SCREEN_HEIGHT
@@ -84,3 +87,14 @@ class Ant(GraphicComponent):
         elif self.state == State.RETURN_TO_HILL:
             self._return_to_hill(hill, delta_time)
         self._update_position()
+
+    def get_draw_options(self):
+        return (4, pyglet.gl.GL_QUADS, None, (
+                 'v2i', (
+                     self.position.x, self.position.y,
+                     self.position.x + self.width, self.position.y,
+                     self.position.x + self.width, self.position.y + self.height,
+                     self.position.x, self.position.y + self.height
+                 )
+                ), WHITE_4
+                )
