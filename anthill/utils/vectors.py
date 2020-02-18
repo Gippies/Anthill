@@ -10,16 +10,16 @@ class Vector2:
         return f'x: {self.x}, y: {self.y}'
 
     def __add__(self, other):
-        return Vector2(int(self.x + other.x), int(self.y + other.y))
+        return Vector2(self.x + other.x, self.y + other.y)
 
     def __sub__(self, other):
-        return Vector2(int(self.x - other.x), int(self.y - other.y))
+        return Vector2(self.x - other.x, self.y - other.y)
 
     def __mul__(self, other):
-        return Vector2(int(self.x * other), int(self.y * other))
+        return Vector2(self.x * other, self.y * other)
 
     def __truediv__(self, other):
-        return Vector2(round(self.x / other), round(self.y / other))
+        return Vector2(self.x / other, self.y / other)
 
     @staticmethod
     def zero():

@@ -8,17 +8,17 @@ from settings import SCREEN_WIDTH, SCREEN_HEIGHT
 
 
 class Colony:
-    INITIAL_AMOUNT = 100
+    INITIAL_AMOUNT_OF_ANTS = 50
     START_POS_X = SCREEN_WIDTH // 2
     START_POS_Y = SCREEN_HEIGHT // 2
 
     def __init__(self):
         self.ants = []
         self.hill = Hill(Vector2(Colony.START_POS_X, Colony.START_POS_Y))
-        x = Colony.START_POS_X
-        y = Colony.START_POS_Y
-        for i in range(0, Colony.INITIAL_AMOUNT):
-            self.ants.append(Ant(Vector2(x, y)))
+        ant_x_start_pos = Colony.START_POS_X + Hill.WIDTH
+        ant_y_start_pos = Colony.START_POS_Y + Hill.HEIGHT
+        for i in range(Colony.INITIAL_AMOUNT_OF_ANTS):
+            self.ants.append(Ant(Vector2(ant_x_start_pos, ant_y_start_pos)))
 
     def update(self, leafies, delta_time):
         for ant in self.ants:
@@ -31,7 +31,7 @@ class PlantKingdom:
     def __init__(self):
         self.leafies = []
         for i in range(0, PlantKingdom.INITIAL_AMOUNT_OF_LEAFIES):
-            pos = Vector2(round(random.uniform(0, SCREEN_WIDTH)), round(random.uniform(0, SCREEN_HEIGHT)))
+            pos = Vector2(random.uniform(0, SCREEN_WIDTH), random.uniform(0, SCREEN_HEIGHT))
             self.leafies.append(Leafy(pos))
 
     def update(self, delta_time):

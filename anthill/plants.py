@@ -15,7 +15,7 @@ class Leafy(GraphicComponent):
 
     def get_draw_options(self):
         return (4, pyglet.gl.GL_QUADS, None, (
-                  'v2i', (
+                  'v2f', (
                       self.position.x, self.position.y,
                       self.position.x + self.width, self.position.y,
                       self.position.x + self.width, self.position.y + self.height,
