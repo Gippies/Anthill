@@ -5,8 +5,8 @@ from anthill.utils.graphics import GraphicComponent
 
 
 class Hill(GraphicComponent):
-    WIDTH = 8
-    HEIGHT = 8
+    WIDTH = 8.0
+    HEIGHT = 8.0
 
     def __init__(self, position, width=WIDTH, height=HEIGHT):
         super().__init__(position, width, height)

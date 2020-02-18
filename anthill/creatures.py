@@ -16,11 +16,11 @@ class State:
 
 
 class Ant(GraphicComponent):
-    MAX_SPEED = 40
+    MAX_SPEED = 40.0
     MAX_SEARCH_SECONDS = 0.5
-    MAX_SEARCH_RADIUS = 20
-    WIDTH = 4
-    HEIGHT = 4
+    MAX_SEARCH_RADIUS = 20.0
+    WIDTH = 4.0
+    HEIGHT = 4.0
 
     def __init__(self, position, width=WIDTH, height=HEIGHT):
         self.velocity = Vector2.zero()
