@@ -8,8 +8,8 @@ class Leafy(GraphicComponent):
     WIDTH = 4.0
     HEIGHT = 4.0
 
-    def __init__(self, position, width=WIDTH, height=HEIGHT):
-        super().__init__(position, width, height)
+    def __init__(self, current_view, position, width=WIDTH, height=HEIGHT):
+        super().__init__(current_view, position, width, height)
         self.being_approached_by = None
         self.being_carried_by = None
 

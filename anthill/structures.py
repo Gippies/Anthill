@@ -4,12 +4,20 @@ from anthill.colors import SAND_YELLOW_4
 from anthill.utils.graphics import GraphicComponent
 
 
+class Dirt(GraphicComponent):
+    WIDTH = 4.0
+    HEIGHT = 4.0
+
+    def __init__(self, current_view, position, width=WIDTH, height=HEIGHT):
+        super().__init__(current_view, position, width, height)
+
+
 class Hill(GraphicComponent):
     WIDTH = 8.0
     HEIGHT = 8.0
 
-    def __init__(self, position, width=WIDTH, height=HEIGHT):
-        super().__init__(position, width, height)
+    def __init__(self, current_view, position, width=WIDTH, height=HEIGHT):
+        super().__init__(current_view, position, width, height)
         self.food_store = []
 
     def get_draw_options(self):

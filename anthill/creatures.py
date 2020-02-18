@@ -22,7 +22,7 @@ class Ant(GraphicComponent):
     WIDTH = 4.0
     HEIGHT = 4.0
 
-    def __init__(self, position, width=WIDTH, height=HEIGHT):
+    def __init__(self, current_view, position, width=WIDTH, height=HEIGHT):
         self.velocity = Vector2.zero()
         self.speed = Ant.MAX_SPEED
         self.search_seconds = random.uniform(0.0, Ant.MAX_SEARCH_SECONDS)
@@ -31,7 +31,7 @@ class Ant(GraphicComponent):
         self.approaching = None
         self.carrying = None
         self.direction_to_go = 0
-        super().__init__(position, width, height)
+        super().__init__(current_view, position, width, height)
 
     def _update_position(self):
         old_position = self.position
