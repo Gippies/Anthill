@@ -3,7 +3,7 @@ import random
 import pyglet
 
 from anthill.colors import WHITE_4
-from anthill.utils.graphics import GraphicComponent
+from anthill.utils.graphics import GraphicComponent, GraphicView
 from anthill.utils.vectors import Vector2
 from settings import SCREEN_WIDTH, SCREEN_HEIGHT
 
@@ -74,10 +74,15 @@ class Ant(GraphicComponent):
         self.carrying.position.y = self.position.y
         self.velocity = self.direction_to_go * self.speed * delta_time
         if self.is_touching(hill):
-            self.state = State.SEARCH
-            hill.food_store.append(self.carrying)
-            self.carrying.being_carried_by = None
-            self.carrying = None
+            self.current_view = GraphicView.UNDERGROUND
+            self.carrying.current_view = GraphicView.UNDERGROUND
+            self.position.x = self.carrying.position.x = SCREEN_WIDTH / 2.0
+            self.position.y = self.carrying.position.y = SCREEN_HEIGHT
+            self.carrying.position.x -= self.width
+            # self.state = State.SEARCH
+            # hill.food_store.append(self.carrying)
+            # self.carrying.being_carried_by = None
+            # self.carrying = None
 
     def update(self, leafies, hill, delta_time):
         if self.state == State.SEARCH:
