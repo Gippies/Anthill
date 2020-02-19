@@ -19,5 +19,4 @@ class Simulation:
         self.all_view.draw(self.view)
 
     def update(self, delta_time):
-        self.colony.update(self.plant_kingdom.leafies, delta_time)
-        self.plant_kingdom.update(delta_time)
+        self.colony.update(self.plant_kingdom.leafies, self.earth.dirts, delta_time)

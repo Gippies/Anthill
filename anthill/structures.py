@@ -1,8 +1,9 @@
 from anthill.colors import SAND_YELLOW, get_color_by_vertices, BROWN
+from anthill.things import Carriable
 from anthill.utils.graphics import GraphicComponent
 
 
-class Dirt(GraphicComponent):
+class Dirt(Carriable):
     WIDTH = 4.0
     HEIGHT = 4.0
     COLOR = get_color_by_vertices(4, *BROWN)

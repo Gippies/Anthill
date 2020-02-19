@@ -1,6 +1,7 @@
 import random
 
-from anthill.creatures import Ant
+from anthill.colors import YELLOW, get_color_by_vertices
+from anthill.creatures import Ant, Role
 from anthill.plants import Leafy
 from anthill.structures import Hill, Dirt
 from anthill.utils.graphics import GraphicView
@@ -9,34 +10,50 @@ from settings import SCREEN_WIDTH, SCREEN_HEIGHT
 
 
 class Colony:
-    INITIAL_AMOUNT_OF_ANTS = 50
-    START_POS_X = SCREEN_WIDTH / 2.0
-    START_POS_Y = SCREEN_HEIGHT / 2.0
+    INITIAL_AMOUNT_OF_GATHERERS = 40
+    INITIAL_AMOUNT_OF_DIGGERS = 10
+    HILL_START_POS_X = SCREEN_WIDTH / 2.0
+    HILL_START_POS_Y = SCREEN_HEIGHT / 2.0
+    GATHERER_START_POS_X = HILL_START_POS_X + Hill.WIDTH
+    GATHERER_START_POS_Y = HILL_START_POS_Y
+    DIGGER_START_POS_X = HILL_START_POS_X
+    DIGGER_START_POS_Y = SCREEN_HEIGHT
 
     def __init__(self):
         self.ants = []
-        self.hill = Hill(GraphicView.OUTSIDE, Vector2(Colony.START_POS_X, Colony.START_POS_Y))
-        ant_x_start_pos = Colony.START_POS_X + Hill.WIDTH
-        ant_y_start_pos = Colony.START_POS_Y + Hill.HEIGHT
-        for i in range(Colony.INITIAL_AMOUNT_OF_ANTS):
-            self.ants.append(Ant(GraphicView.OUTSIDE, Vector2(ant_x_start_pos, ant_y_start_pos)))
+        self.hill = Hill(GraphicView.OUTSIDE, Vector2(Colony.HILL_START_POS_X, Colony.HILL_START_POS_Y))
+        for i in range(Colony.INITIAL_AMOUNT_OF_GATHERERS):
+            self.ants.append(Ant(GraphicView.OUTSIDE, Role.GATHERER, Vector2(Colony.GATHERER_START_POS_X, Colony.GATHERER_START_POS_Y)))
+        for i in range(Colony.INITIAL_AMOUNT_OF_DIGGERS):
+            self.ants.append(Ant(GraphicView.UNDERGROUND, Role.DIGGER, Vector2(Colony.DIGGER_START_POS_X, Colony.DIGGER_START_POS_Y), color=get_color_by_vertices(4, *YELLOW)))
 
-    def update(self, leafies, delta_time):
+    def update(self, leafies, dirts, delta_time):
         for ant in self.ants:
-            ant.update(leafies, self.hill, delta_time)
+            ant.update(leafies, dirts, self.hill, delta_time)
 
 
 class Earth:
-    INITIAL_AMOUNT_OF_DIRT = 5
+    INITIAL_AMOUNT_OF_DIRT = 9
     START_POS_X = SCREEN_WIDTH / 2.0
     START_POS_Y = SCREEN_HEIGHT - Dirt.HEIGHT
 
     def __init__(self):
         self.dirts = []
-        start_x = Earth.START_POS_X - ((Earth.INITIAL_AMOUNT_OF_DIRT / 2.0) * Dirt.WIDTH)
-        for i in range(Earth.INITIAL_AMOUNT_OF_DIRT):
-            self.dirts.append(Dirt(GraphicView.UNDERGROUND, Vector2(start_x, Earth.START_POS_Y)))
+        start_x = Earth.START_POS_X - 2 * Dirt.WIDTH
+        start_y = Earth.START_POS_Y
+
+        # Start dirt in 'u' shape:
+        for i in range(Earth.INITIAL_AMOUNT_OF_DIRT // 3):
+            self.dirts.append(Dirt(GraphicView.UNDERGROUND, Vector2(start_x, start_y)))
+            start_y -= Dirt.HEIGHT
+
+        for i in range(Earth.INITIAL_AMOUNT_OF_DIRT // 3):
+            self.dirts.append(Dirt(GraphicView.UNDERGROUND, Vector2(start_x, start_y)))
             start_x += Dirt.WIDTH
+
+        for i in range(Earth.INITIAL_AMOUNT_OF_DIRT // 3 + 1):
+            self.dirts.append(Dirt(GraphicView.UNDERGROUND, Vector2(start_x, start_y)))
+            start_y += Dirt.HEIGHT
 
 
 class PlantKingdom:
@@ -47,7 +64,3 @@ class PlantKingdom:
         for i in range(0, PlantKingdom.INITIAL_AMOUNT_OF_LEAFIES):
             pos = Vector2(random.uniform(0, SCREEN_WIDTH), random.uniform(0, SCREEN_HEIGHT))
             self.leafies.append(Leafy(GraphicView.OUTSIDE, pos))
-
-    def update(self, delta_time):
-        for leafy in self.leafies:
-            leafy.update(delta_time)
