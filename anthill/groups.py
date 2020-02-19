@@ -2,7 +2,7 @@ import random
 
 from anthill.creatures import Ant
 from anthill.plants import Leafy
-from anthill.structures import Hill
+from anthill.structures import Hill, Dirt
 from anthill.utils.graphics import GraphicView
 from anthill.utils.vectors import Vector2
 from settings import SCREEN_WIDTH, SCREEN_HEIGHT
@@ -10,8 +10,8 @@ from settings import SCREEN_WIDTH, SCREEN_HEIGHT
 
 class Colony:
     INITIAL_AMOUNT_OF_ANTS = 50
-    START_POS_X = SCREEN_WIDTH // 2
-    START_POS_Y = SCREEN_HEIGHT // 2
+    START_POS_X = SCREEN_WIDTH / 2.0
+    START_POS_Y = SCREEN_HEIGHT / 2.0
 
     def __init__(self):
         self.ants = []
@@ -24,6 +24,19 @@ class Colony:
     def update(self, leafies, delta_time):
         for ant in self.ants:
             ant.update(leafies, self.hill, delta_time)
+
+
+class Earth:
+    INITIAL_AMOUNT_OF_DIRT = 5
+    START_POS_X = SCREEN_WIDTH / 2.0
+    START_POS_Y = SCREEN_HEIGHT - Dirt.HEIGHT
+
+    def __init__(self):
+        self.dirts = []
+        start_x = Earth.START_POS_X - ((Earth.INITIAL_AMOUNT_OF_DIRT / 2.0) * Dirt.WIDTH)
+        for i in range(Earth.INITIAL_AMOUNT_OF_DIRT):
+            self.dirts.append(Dirt(GraphicView.UNDERGROUND, Vector2(start_x, Earth.START_POS_Y)))
+            start_x += Dirt.WIDTH
 
 
 class PlantKingdom:
