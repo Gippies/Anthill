@@ -2,7 +2,7 @@ import random
 
 import pyglet
 
-from anthill.colors import WHITE_4
+from anthill.colors import WHITE, get_color_by_vertices
 from anthill.utils.graphics import GraphicComponent, GraphicView
 from anthill.utils.vectors import Vector2
 from settings import SCREEN_WIDTH, SCREEN_HEIGHT
@@ -21,8 +21,9 @@ class Ant(GraphicComponent):
     MAX_SEARCH_RADIUS = 20.0
     WIDTH = 4.0
     HEIGHT = 4.0
+    COLOR = get_color_by_vertices(4, *WHITE)
 
-    def __init__(self, current_view, position, width=WIDTH, height=HEIGHT):
+    def __init__(self, current_view, position, color=COLOR, width=WIDTH, height=HEIGHT):
         self.velocity = Vector2.zero()
         self.speed = Ant.MAX_SPEED
         self.search_seconds = random.uniform(0.0, Ant.MAX_SEARCH_SECONDS)
@@ -31,7 +32,7 @@ class Ant(GraphicComponent):
         self.approaching = None
         self.carrying = None
         self.direction_to_go = 0
-        super().__init__(current_view, position, width, height)
+        super().__init__(current_view, position, color, width, height)
 
     def _update_position(self):
         old_position = self.position
@@ -101,5 +102,5 @@ class Ant(GraphicComponent):
                      self.position.x + self.width, self.position.y + self.height,
                      self.position.x, self.position.y + self.height
                  )
-                ), WHITE_4
+                ), self.color
                 )

@@ -2,9 +2,10 @@ from pyglet.graphics import Batch
 
 
 class GraphicComponent:
-    def __init__(self, current_view, position, width, height):
+    def __init__(self, current_view, position, color, width, height):
         self.current_view = current_view
         self.position = position
+        self.color = color
         self.width = width
         self.height = height
 
