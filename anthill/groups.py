@@ -47,7 +47,7 @@ class Earth:
             self.dirts.append(Dirt(GraphicView.UNDERGROUND, Vector2(start_x, start_y)))
             start_y -= Dirt.HEIGHT
 
-        for i in range(Earth.INITIAL_AMOUNT_OF_DIRT // 3):
+        for i in range(5):
             self.dirts.append(Dirt(GraphicView.UNDERGROUND, Vector2(start_x, start_y)))
             start_x += Dirt.WIDTH
 
