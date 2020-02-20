@@ -38,7 +38,8 @@ class Earth:
     START_POS_Y = SCREEN_HEIGHT - Dirt.HEIGHT
 
     def __init__(self):
-        self.dirts = []
+        self.all_dirts = []
+        self.viewable_dirts = []
 
         all_dirts = []
         r_counter = 0
@@ -84,7 +85,12 @@ class Earth:
         for i in range(len(all_dirts)):
             for j in range(len(all_dirts[0])):
                 if all_dirts[i][j] is not None:
-                    self.dirts.append(all_dirts[i][j])
+                    self.all_dirts.append(all_dirts[i][j])
+
+    def update(self):
+        for dirt in self.all_dirts:
+            if dirt.is_viewable and dirt not in self.viewable_dirts:
+                self.viewable_dirts.append(dirt)
 
 
 class PlantKingdom:

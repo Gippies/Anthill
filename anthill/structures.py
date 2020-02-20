@@ -19,11 +19,14 @@ class Dirt(Carriable):
         self.bottom_left = None
         self.bottom = None
         self.bottom_right = None
+
+        self.is_viewable = False
         super().__init__(current_view, position, color, width, height)
 
     def _show_neighbor(self, neighbor_str, self_str):
         if getattr(self, neighbor_str) is not None:
             setattr(getattr(self, neighbor_str), 'current_view', GraphicView.UNDERGROUND)
+            setattr(getattr(self, neighbor_str), 'is_viewable', True)
             setattr(getattr(self, neighbor_str), self_str, None)
 
     def pick_up(self):

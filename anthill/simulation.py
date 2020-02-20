@@ -12,11 +12,12 @@ class Simulation:
         graphic_components = [self.colony.hill]
         graphic_components.extend(self.colony.ants)
         graphic_components.extend(self.plant_kingdom.leafies)
-        graphic_components.extend(self.earth.dirts)
+        graphic_components.extend(self.earth.all_dirts)
         self.all_view = GraphicView(graphic_components)
 
     def draw(self):
         self.all_view.draw(self.view)
 
     def update(self, delta_time):
-        self.colony.update(self.plant_kingdom.leafies, self.earth.dirts, delta_time)
+        self.colony.update(self.plant_kingdom.leafies, self.earth.viewable_dirts, delta_time)
+        self.earth.update()
