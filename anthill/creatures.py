@@ -41,15 +41,20 @@ class Ant(GraphicComponent):
         self.direction_to_go = 0
         super().__init__(current_view, position, color, width, height)
 
-    def _update_position(self):
+    def _update_position(self, dirts):
         old_position = self.position
         self.position = old_position + self.velocity
 
-        # Stay in the screen
+        # Stay in the boundaries
         if not 0 < self.position.x < SCREEN_WIDTH:
             self.position.x = old_position.x
         if not 0 < self.position.y < SCREEN_HEIGHT:
             self.position.y = old_position.y
+        if self.current_view == GraphicView.UNDERGROUND:
+            for dirt in dirts:
+                if self.is_touching(dirt) and self.carrying is not None and self.carrying is not dirt:
+                    self.position = old_position
+                    break
 
     def _set_position_to_view(self):
         if self.current_view == GraphicView.OUTSIDE:
@@ -69,7 +74,8 @@ class Ant(GraphicComponent):
             self.velocity = self.direction_to_go * self.speed * delta_time
             self.search_seconds = random.uniform(0.0, Ant.MAX_SEARCH_SECONDS)
         for carriable in carriables:
-            if self.position.x - Ant.MAX_SEARCH_RADIUS <= carriable.position.x <= self.position.x + Ant.MAX_SEARCH_RADIUS and \
+            if self.current_view == carriable.current_view and \
+                    self.position.x - Ant.MAX_SEARCH_RADIUS <= carriable.position.x <= self.position.x + Ant.MAX_SEARCH_RADIUS and \
                     self.position.y - Ant.MAX_SEARCH_RADIUS <= carriable.position.y <= self.position.y + Ant.MAX_SEARCH_RADIUS and \
                     carriable.being_approached_by is None and carriable.being_carried_by is None and carriable.is_stored is False:
                 self.state = State.GET_THING
@@ -86,6 +92,7 @@ class Ant(GraphicComponent):
             self.approaching = None
             self.carrying.being_carried_by = self
             self.carrying.being_approached_by = None
+            self.carrying.pick_up()
 
     def _return_to_hill(self, hill, delta_time):
         self.direction_to_go = (hill.position - self.position).get_normalized_vector()
@@ -103,13 +110,20 @@ class Ant(GraphicComponent):
             # self.carrying = None
 
     def update(self, leafies, dirts, hill, delta_time):
-        if self.state == State.SEARCH:
-            if self.role == Role.GATHERER:
+        if self.role == Role.GATHERER:
+            if self.state == State.SEARCH:
                 self._search(leafies, delta_time)
-            elif self.role == Role.DIGGER:
+            elif self.state == State.GET_THING:
+                self._get_thing(delta_time)
+            elif self.state == State.RETURN_TO_HILL:
+                self._return_to_hill(hill, delta_time)
+
+        elif self.role == Role.DIGGER:
+            if self.state == State.SEARCH:
                 self._search(dirts, delta_time)
-        elif self.state == State.GET_THING:
-            self._get_thing(delta_time)
-        elif self.state == State.RETURN_TO_HILL:
-            self._return_to_hill(hill, delta_time)
-        self._update_position()
+            elif self.state == State.GET_THING:
+                self._get_thing(delta_time)
+            elif self.state == State.RETURN_TO_HILL:
+                self._return_to_hill(hill, delta_time)
+
+        self._update_position(dirts)

@@ -39,21 +39,52 @@ class Earth:
 
     def __init__(self):
         self.dirts = []
-        start_x = Earth.START_POS_X - 2 * Dirt.WIDTH
-        start_y = Earth.START_POS_Y
+
+        all_dirts = []
+        r_counter = 0
+        c_counter = 0
+        for i in range(0, SCREEN_WIDTH, int(Dirt.WIDTH)):
+            temp_dirts = []
+            for j in range(0, SCREEN_HEIGHT, int(Dirt.HEIGHT)):
+                new_dirt = Dirt(None, Vector2(i, j))
+                temp_dirts.append(new_dirt)
+
+                if c_counter - 1 >= 0:
+                    new_dirt.left = temp_dirts[c_counter - 1]
+                    temp_dirts[c_counter - 1].right = new_dirt
+
+                if c_counter - 1 >= 0 and r_counter - 1 >= 0:
+                    new_dirt.bottom_left = all_dirts[r_counter - 1][c_counter - 1]
+                    all_dirts[r_counter - 1][c_counter - 1].top_right = new_dirt
+
+                if r_counter - 1 >= 0:
+                    new_dirt.bottom = all_dirts[r_counter - 1][c_counter]
+                    all_dirts[r_counter - 1][c_counter].top = new_dirt
+
+                if r_counter - 1 >= 0 and c_counter + 1 < len(all_dirts[r_counter - 1]):
+                    new_dirt.bottom_right = all_dirts[r_counter - 1][c_counter + 1]
+                    all_dirts[r_counter - 1][c_counter + 1].top_left = new_dirt
+                c_counter += 1
+            all_dirts.append(temp_dirts)
+            c_counter = 0
+            r_counter += 1
+
+        start_x = int((Earth.START_POS_X - 2 * Dirt.WIDTH) / Dirt.WIDTH)
+        start_y = int(Earth.START_POS_Y / Dirt.HEIGHT)
 
         # Start dirt in 'u' shape:
-        for i in range(Earth.INITIAL_AMOUNT_OF_DIRT // 3):
-            self.dirts.append(Dirt(GraphicView.UNDERGROUND, Vector2(start_x, start_y)))
-            start_y -= Dirt.HEIGHT
+        for i in range(3):
+            for j in range(5):
+                all_dirts[start_x][start_y].pick_up()
+                all_dirts[start_x][start_y] = None
+                start_x += 1
+            start_x = int((Earth.START_POS_X - 2 * Dirt.WIDTH) / Dirt.WIDTH)
+            start_y -= 1
 
-        for i in range(5):
-            self.dirts.append(Dirt(GraphicView.UNDERGROUND, Vector2(start_x, start_y)))
-            start_x += Dirt.WIDTH
-
-        for i in range(Earth.INITIAL_AMOUNT_OF_DIRT // 3 + 1):
-            self.dirts.append(Dirt(GraphicView.UNDERGROUND, Vector2(start_x, start_y)))
-            start_y += Dirt.HEIGHT
+        for i in range(len(all_dirts)):
+            for j in range(len(all_dirts[0])):
+                if all_dirts[i][j] is not None:
+                    self.dirts.append(all_dirts[i][j])
 
 
 class PlantKingdom:

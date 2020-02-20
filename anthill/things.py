@@ -7,3 +7,7 @@ class Carriable(GraphicComponent):
         self.being_approached_by = None
         self.being_carried_by = None
         self.is_stored = False
+
+    def pick_up(self):
+        """Override this method to do something once picked-up"""
+        pass
