@@ -57,6 +57,10 @@ class Ant(GraphicComponent):
         old_position = self.position
         self.position = old_position + self.velocity
 
+        if self.carrying is not None:
+            self.carrying.position.x = self.position.x - self.carrying.width
+            self.carrying.position.y = self.position.y
+
         # Stay in the boundaries
         if not 0 < self.position.x < SCREEN_WIDTH:
             self.position.x = old_position.x
@@ -75,9 +79,6 @@ class Ant(GraphicComponent):
         elif self.current_view == GraphicView.UNDERGROUND:
             self.position.x = SCREEN_WIDTH / 2.0
             self.position.y = SCREEN_HEIGHT
-        if self.carrying is not None:
-            self.carrying.position.x = self.position.x - self.carrying.width
-            self.carrying.position.y = self.position.y
 
     def _search(self, carriables, delta_time):
         self.search_seconds -= delta_time
@@ -113,40 +114,30 @@ class Ant(GraphicComponent):
             self.carrying.position.y = self.position.y
         self.velocity = self.direction_to_go * self.speed * delta_time
         if self.is_touching(hill):
+            self.state = self.state_queue.dequeue()
+            self.current_view = GraphicView.UNDERGROUND
             if self.carrying is not None:
-                self.state = self.state_queue.dequeue()
                 self.drop_iterations = Ant.MAX_DROP_ITERATIONS
                 self.carrying.current_view = GraphicView.UNDERGROUND
-            else:
-                self.state = self.state_queue.dequeue()
-            self.current_view = GraphicView.UNDERGROUND
             self._set_position_to_view()
             self.search_seconds = random.uniform(0.0, Ant.MAX_SEARCH_SECONDS)
 
     def _return_to_surface(self, delta_time):
         self.direction_to_go = (Vector2(SCREEN_WIDTH / 2.0, SCREEN_HEIGHT) - self.position).get_normalized_vector()
-        if self.carrying is not None:
-            self.carrying.position.x = self.position.x - self.width
-            self.carrying.position.y = self.position.y
         self.velocity = self.direction_to_go * self.speed * delta_time
         if self.current_view == GraphicView.UNDERGROUND and \
                 self.position.x <= SCREEN_WIDTH / 2.0 <= self.position.x + self.width and \
                 self.position.y <= SCREEN_HEIGHT <= self.position.y + self.height:
+            self.state = self.state_queue.dequeue()
+            self.current_view = GraphicView.OUTSIDE
             if self.carrying is not None:
-                self.state = self.state_queue.dequeue()
                 self.drop_iterations = Ant.MAX_DROP_ITERATIONS
                 self.carrying.current_view = GraphicView.OUTSIDE
-            else:
-                self.state = self.state_queue.dequeue()
-            self.current_view = GraphicView.OUTSIDE
             self._set_position_to_view()
             self.search_seconds = random.uniform(0.0, Ant.MAX_SEARCH_SECONDS)
 
     def _drop_thing(self, delta_time):
         self.search_seconds -= delta_time
-        if self.carrying is not None:
-            self.carrying.position.x = self.position.x - self.width
-            self.carrying.position.y = self.position.y
         if self.search_seconds <= 0.0:
             if self.drop_iterations > 0:
                 self.drop_iterations -= 1
