@@ -2,6 +2,7 @@ import random
 
 from anthill.colors import WHITE, get_color_by_vertices, YELLOW
 from anthill.structures import Hill
+from anthill.utils.circular_queue import CircularQueue
 from anthill.utils.graphics import GraphicComponent, GraphicView
 from anthill.utils.vectors import Vector2
 from settings import SCREEN_WIDTH, SCREEN_HEIGHT
@@ -14,6 +15,9 @@ class State:
     RETURN_TO_HILL = 3
     RETURN_TO_SURFACE = 4
     DROP_THING = 5
+
+    GATHERER_STATES = [SEARCH, GET_THING, RETURN_TO_HILL, DROP_THING, RETURN_TO_SURFACE]
+    DIGGER_STATES = [SEARCH, GET_THING, RETURN_TO_SURFACE, DROP_THING, RETURN_TO_HILL]
 
 
 class Role:
@@ -36,8 +40,12 @@ class Ant(GraphicComponent):
         self.velocity = Vector2.zero()
         self.speed = Ant.MAX_SPEED
         self.search_seconds = random.uniform(0.0, Ant.MAX_SEARCH_SECONDS)
-        self.state = State.SEARCH
         self.role = role
+        if self.role == Role.GATHERER:
+            self.state_queue = CircularQueue(*State.GATHERER_STATES)
+        elif self.role == Role.DIGGER:
+            self.state_queue = CircularQueue(*State.DIGGER_STATES)
+        self.state = self.state_queue.dequeue()
 
         self.approaching = None
         self.carrying = None
@@ -82,7 +90,7 @@ class Ant(GraphicComponent):
                     self.position.x - Ant.MAX_SEARCH_RADIUS <= carriable.position.x <= self.position.x + Ant.MAX_SEARCH_RADIUS and \
                     self.position.y - Ant.MAX_SEARCH_RADIUS <= carriable.position.y <= self.position.y + Ant.MAX_SEARCH_RADIUS and \
                     carriable.being_approached_by is None and carriable.being_carried_by is None and carriable.is_stored is False:
-                self.state = State.GET_THING
+                self.state = self.state_queue.dequeue()
                 self.approaching = carriable
                 carriable.being_approached_by = self
                 break
@@ -91,10 +99,7 @@ class Ant(GraphicComponent):
         self.direction_to_go = (self.approaching.position - self.position).get_normalized_vector()
         self.velocity = self.direction_to_go * self.speed * delta_time
         if self.is_touching(self.approaching):
-            if self.role == Role.GATHERER:
-                self.state = State.RETURN_TO_HILL
-            elif self.role == Role.DIGGER:
-                self.state = State.RETURN_TO_SURFACE
+            self.state = self.state_queue.dequeue()
             self.carrying = self.approaching
             self.approaching = None
             self.carrying.being_carried_by = self
@@ -109,11 +114,11 @@ class Ant(GraphicComponent):
         self.velocity = self.direction_to_go * self.speed * delta_time
         if self.is_touching(hill):
             if self.carrying is not None:
-                self.state = State.DROP_THING
+                self.state = self.state_queue.dequeue()
                 self.drop_iterations = Ant.MAX_DROP_ITERATIONS
                 self.carrying.current_view = GraphicView.UNDERGROUND
             else:
-                self.state = State.SEARCH
+                self.state = self.state_queue.dequeue()
             self.current_view = GraphicView.UNDERGROUND
             self._set_position_to_view()
             self.search_seconds = random.uniform(0.0, Ant.MAX_SEARCH_SECONDS)
@@ -124,14 +129,15 @@ class Ant(GraphicComponent):
             self.carrying.position.x = self.position.x - self.width
             self.carrying.position.y = self.position.y
         self.velocity = self.direction_to_go * self.speed * delta_time
-        if self.position.x <= SCREEN_WIDTH / 2.0 <= self.position.x + self.width and \
+        if self.current_view == GraphicView.UNDERGROUND and \
+                self.position.x <= SCREEN_WIDTH / 2.0 <= self.position.x + self.width and \
                 self.position.y <= SCREEN_HEIGHT <= self.position.y + self.height:
             if self.carrying is not None:
-                self.state = State.DROP_THING
+                self.state = self.state_queue.dequeue()
                 self.drop_iterations = Ant.MAX_DROP_ITERATIONS
                 self.carrying.current_view = GraphicView.OUTSIDE
             else:
-                self.state = State.SEARCH
+                self.state = self.state_queue.dequeue()
             self.current_view = GraphicView.OUTSIDE
             self._set_position_to_view()
             self.search_seconds = random.uniform(0.0, Ant.MAX_SEARCH_SECONDS)
@@ -148,37 +154,24 @@ class Ant(GraphicComponent):
                 self.velocity = self.direction_to_go * self.speed * delta_time
                 self.search_seconds = random.uniform(0.0, Ant.MAX_SEARCH_SECONDS)
             else:
-                if self.role == Role.GATHERER:
-                    self.state = State.RETURN_TO_SURFACE
-                elif self.role == Role.DIGGER:
-                    self.state = State.RETURN_TO_HILL
+                self.state = self.state_queue.dequeue()
                 self.carrying.is_stored = True
                 self.carrying.being_carried_by = None
                 self.carrying = None
 
     def update(self, leafies, dirts, hill, delta_time):
-        if self.role == Role.GATHERER:
-            if self.state == State.SEARCH:
+        if self.state == State.SEARCH:
+            if self.role == Role.GATHERER:
                 self._search(leafies, delta_time)
-            elif self.state == State.GET_THING:
-                self._get_thing(delta_time)
-            elif self.state == State.RETURN_TO_HILL:
-                self._return_to_hill(hill, delta_time)
-            elif self.state == State.RETURN_TO_SURFACE:
-                self._return_to_surface(delta_time)
-            elif self.state == State.DROP_THING:
-                self._drop_thing(delta_time)
-
-        elif self.role == Role.DIGGER:
-            if self.state == State.SEARCH:
+            elif self.role == Role.DIGGER:
                 self._search(dirts, delta_time)
-            elif self.state == State.GET_THING:
-                self._get_thing(delta_time)
-            elif self.state == State.RETURN_TO_HILL:
-                self._return_to_hill(hill, delta_time)
-            elif self.state == State.RETURN_TO_SURFACE:
-                self._return_to_surface(delta_time)
-            elif self.state == State.DROP_THING:
-                self._drop_thing(delta_time)
+        elif self.state == State.GET_THING:
+            self._get_thing(delta_time)
+        elif self.state == State.RETURN_TO_HILL:
+            self._return_to_hill(hill, delta_time)
+        elif self.state == State.RETURN_TO_SURFACE:
+            self._return_to_surface(delta_time)
+        elif self.state == State.DROP_THING:
+            self._drop_thing(delta_time)
 
         self._update_position(dirts)
